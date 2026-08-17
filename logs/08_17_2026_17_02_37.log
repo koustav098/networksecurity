@@ -1,0 +1,17 @@
+[ 2026-08-17 17:02:44,029 ] 32 root - INFO - Initiate the data ingestion
+[ 2026-08-17 17:02:44,166 ] 36 root - INFO - Successfully loaded data from local CSV file.
+[ 2026-08-17 17:02:44,305 ] 61 root - INFO - Successfully exported data into feature store.
+[ 2026-08-17 17:02:44,358 ] 77 root - INFO - Performed train test split on the dataframe.
+[ 2026-08-17 17:02:44,360 ] 87 root - INFO - Exporting train and test file path.
+[ 2026-08-17 17:02:44,486 ] 103 root - INFO - Exported train and test file path.
+[ 2026-08-17 17:02:44,486 ] 129 root - INFO - Data ingestion completed successfully.
+[ 2026-08-17 17:02:44,487 ] 38 root - INFO - Data ingestion completed
+[ 2026-08-17 17:02:44,542 ] 52 root - INFO - Initiate the data validation
+[ 2026-08-17 17:02:44,720 ] 61 root - INFO - Required number of columns: 31
+[ 2026-08-17 17:02:44,720 ] 65 root - INFO - Data frame has columns: 31
+[ 2026-08-17 17:02:44,720 ] 61 root - INFO - Required number of columns: 31
+[ 2026-08-17 17:02:44,720 ] 65 root - INFO - Data frame has columns: 31
+[ 2026-08-17 17:02:45,160 ] 58 root - INFO - Data validation completed
+[ 2026-08-17 17:02:45,160 ] 62 root - INFO - Data Transformation Started
+[ 2026-08-17 17:02:45,160 ] 101 root - INFO - Entered initiate_data_transformation method of DataTransformation class
+[ 2026-08-17 17:02:45,160 ] 107 root - INFO - Starting data transformation
