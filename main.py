@@ -1,70 +1,79 @@
-from networksecurity.components.data_ingestion import DataIngestion
-from networksecurity.components.data_validation import DataValidation
-from networksecurity.components.data_transformation import DataTransformation
-from networksecurity.exception.exception import NetworkSecurityException
-from networksecurity.logging.logger import logging
-
-from networksecurity.entity.config_entity import (
-    DataIngestionConfig,
-    DataValidationConfig,
-    TrainingPipelineConfig,
-    DataTransformationConfig
-)
-
 import sys
+from networksecurity.components.data_ingestion import DataIngestion 
+from networksecurity.components.data_validation import DataValidation 
+from networksecurity.components.data_transformation import DataTransformation 
+from networksecurity.components.model_trainer import ModelTrainer  # FIX 1: Added ModelTrainer import
 
+from networksecurity.exception.exception import NetworkSecurityException 
+from networksecurity.logging.logger import logging 
 
-if __name__ == "__main__":
+from networksecurity.entity.config_entity import ( 
+    DataIngestionConfig, 
+    DataValidationConfig, 
+    TrainingPipelineConfig, 
+    DataTransformationConfig,
+    ModelTrainerConfig  # FIX 1: Added ModelTrainerConfig import
+) 
 
-    try:
+if __name__ == "__main__": 
 
-        trainingpipelineconfig = TrainingPipelineConfig()
+    try: 
+        trainingpipelineconfig = TrainingPipelineConfig() 
 
-        # Data Ingestion
-        dataingestionconfig = DataIngestionConfig(
-            trainingpipelineconfig
-        )
+        # ----------------------------------------------------
+        # 1. Data Ingestion
+        # ----------------------------------------------------
+        dataingestionconfig = DataIngestionConfig(trainingpipelineconfig) 
+        data_ingestion = DataIngestion(dataingestionconfig) 
+        
+        logging.info("Initiate the data ingestion") 
+        dataingestionartifact = data_ingestion.initiate_data_ingestion() 
+        logging.info("Data ingestion completed") 
+        print(dataingestionartifact) 
 
-        data_ingestion = DataIngestion(
-            dataingestionconfig
-        )
+        # ----------------------------------------------------
+        # 2. Data Validation
+        # ----------------------------------------------------
+        datavalidationconfig = DataValidationConfig(trainingpipelineconfig) 
+        data_validation = DataValidation(dataingestionartifact, datavalidationconfig) 
+        
+        logging.info("Initiate the data validation") 
+        data_validation_artifact = data_validation.initiate_data_validation() 
+        logging.info("Data validation completed") 
+        print(data_validation_artifact) 
 
-        logging.info("Initiate the data ingestion")
+        # ----------------------------------------------------
+        # 3. Data Transformation
+        # ----------------------------------------------------
+        data_transformation_config = DataTransformationConfig(trainingpipelineconfig) 
+        logging.info("Data Transformation Started") 
+        
+        data_transformation = DataTransformation(
+            data_validation_artifact, 
+            data_transformation_config
+        ) 
+        
+        # FIX 2 & 4: Store in data_transformation_artifact instead of data_validation_artifact
+        data_transformation_artifact = data_transformation.initiate_data_transformation() 
+        print(data_transformation_artifact) 
+        logging.info("Data Transformation Completed") 
 
-        dataingestionartifact = (
-            data_ingestion.initiate_data_ingestion()
-        )
+        # ----------------------------------------------------
+        # 4. Model Training
+        # ----------------------------------------------------
+        logging.info("Model Training started") 
+        model_trainer_config = ModelTrainerConfig(trainingpipelineconfig) 
+        
+        # FIX 3: Pass data_transformation_artifact instead of data_transformation
+        model_trainer = ModelTrainer(
+            data_transformation_artifact=data_transformation_artifact,
+            model_trainer_config=model_trainer_config
+        ) 
+        
+        model_trainer_artifact = model_trainer.initiate_model_trainer() 
+        print(model_trainer_artifact)
+        
+        logging.info("Model Training artifact created") 
 
-        logging.info("Data ingestion completed")
-
-        print(dataingestionartifact)
-
-        # Data Validation
-        datavalidationconfig = DataValidationConfig(
-            trainingpipelineconfig
-        )
-
-        data_validation = DataValidation(
-            dataingestionartifact,
-            datavalidationconfig
-        )
-
-        logging.info("Initiate the data validation")
-
-        data_validation_artifact = (
-            data_validation.initiate_data_validation()
-        )
-
-        logging.info("Data validation completed")
-
-        print(data_validation_artifact)
-        data_transformation_config=DataTransformationConfig(trainingpipelineconfig)
-        logging.info("Data Transformation Started")
-        data_transformation=DataTransformation(data_validation_artifact,data_transformation_config)
-        data_validation_artifact=data_transformation.initiate_data_transformation()
-        print(data_validation_artifact)
-        logging.info("Data Transformation Completed")
-
-
-    except Exception as e:
+    except Exception as e: 
         raise NetworkSecurityException(e, sys) from e
